@@ -1,0 +1,55 @@
+package aimas.actions;
+
+import aimas.Node;
+
+import java.util.List;
+
+/**
+ * Action - non-atomic
+ */
+public abstract class Action {
+    protected ActionType actionType;
+    protected Action parent; // each action's parent is the action which generated that action;
+    protected int numberAsChild;
+    protected List<Action> childrenActions;
+    // null if it itself is the parent
+    public ActionType getType(){
+        return actionType;
+    }
+    public abstract boolean isAchieved(Node node);
+    public int numberOfAttempts;
+
+    public Action getParent(){
+        return this.parent;
+    }
+    public void setParent(Action parent){
+        this.parent = parent;
+    }
+
+    // From Warm-Up assignment
+    public static int manhDist(int i1, int j1, int i2, int j2){ // between cells of a map, not between state nodes
+        int diffI = Math.abs(i1 - i2);
+        int diffJ = Math.abs(j1 - j2);
+        return diffI + diffJ;
+    }
+    public List<Action> getChildrenActions(){
+        return childrenActions;
+    }
+    public int getNumOfChildren() { return childrenActions.size(); }
+    public int getNumberAsChild() { return numberAsChild; }
+    public void setNumberAsChild(int numberAsChild) { this.numberAsChild = numberAsChild; }
+    public boolean hasMoreChildren(int curChildIndex){
+        if (getNumOfChildren() - curChildIndex > 1) return true;
+        return false;
+    }
+    public Action getChildOfNumber (int number){
+        return childrenActions.get(number);
+    }
+    public void setChildOfNumber(Action childAction, int number){
+        childrenActions.add(number, childAction);
+        childrenActions.get(number).setNumberAsChild(number);
+        for (int i = number+1; i<childrenActions.size(); i++){
+            childrenActions.get(i).setNumberAsChild(childrenActions.get(i).getNumberAsChild()+1);
+        }
+    }
+}
